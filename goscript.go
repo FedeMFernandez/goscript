@@ -1,4 +1,4 @@
-package goscript
+package main
 
 import (
 	"errors"
@@ -113,12 +113,34 @@ func valueParser(i interface{}, kind reflect.Kind) (v reflect.Value, err error) 
 	return
 }
 
-//StructtoMap ...
+//StructToMap ...
 func StructToMap(t reflect.Type, v reflect.Value) (m map[string]interface{}) {
 	m = make(map[string]interface{})
 	numField := t.NumField()
 	for i := 0; i < numField; i++ {
 		m[t.Field(i).Name] = v.Field(i).Interface()
+	}
+	return
+}
+
+//MapToStruct ...
+func MapToStruct(m map[interface{}]interface{}, structPtr interface{}) (err error) {
+	t, err := typeParser(structPtr, reflect.Struct)
+	if err != nil {
+		return
+	}
+	v, err := valueParser(structPtr, reflect.Struct)
+	if err != nil {
+		return
+	}
+	numField := t.NumField()
+	for key, val := range m {
+		for i := 0; i < numField; i++ {
+			if key == t.Field(i).Name {
+				mVal := reflect.ValueOf(val)
+				v.Field(i).Set(mVal)
+			}
+		}
 	}
 	return
 }
