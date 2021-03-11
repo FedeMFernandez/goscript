@@ -1,4 +1,4 @@
-package main
+package goscript
 
 import (
 	"errors"
@@ -139,6 +139,7 @@ func MapToStruct(m map[interface{}]interface{}, structPtr interface{}) (err erro
 			if key == t.Field(i).Name {
 				mVal := reflect.ValueOf(val)
 				v.Field(i).Set(mVal)
+				break
 			}
 		}
 	}
